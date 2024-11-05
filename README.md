@@ -27,7 +27,7 @@ mvn -Psafe-deploy deploy
 ### Clone and install
 
 ```console
-git clone https://github.com/reactome-pwp/diagram-exporter.git
+git clone https://github.com/reactome/diagram-exporter.git
 cd diagram-exporter
 mvn clean package
 ```
