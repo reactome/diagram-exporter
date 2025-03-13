@@ -24,8 +24,12 @@ public class BaseTest {
 
     @Value("${spring.neo4j.authentication.password}")
     private String neo4jPassword;
+
+    @Value("${spring.data.neo4j.database}")
+    private String database;
+
     @BeforeAll
     public void initGraph() {
-        ReactomeGraphCore.initialise(this.neo4jURI, this.neo4jUser, this.neo4jPassword);
+        ReactomeGraphCore.initialise(this.neo4jURI, this.neo4jUser, this.neo4jPassword, this.database);
     }
 }
