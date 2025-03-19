@@ -42,14 +42,14 @@ import static org.reactome.server.tools.diagram.exporter.common.ResourcesFactory
  * staff, like performing the analysis or creating and deleting the images dir.
  */
 public class TestUtils {
-    public static final String TOKEN_OVER_1 = "MjAyMTEyMTcxNDQyNDBfMg%253D%253D"; // uniprot (GBM Uniprot)
-    public static final String TOKEN_EXPRESSION_1 = "MjAyMTEyMTcxNDU4MDhfNQ%253D%253D";  // microarray (probeset)
-    public static final String TOKEN_EXPRESSION_2 = "MjAyMTEyMTcxNDU1NDZfNA%253D%253D";  // HPA (GeneName)
-    public static final String TOKEN_CELL = "MjAyMzA2MTIxNDU1MzlfOA%3D%3D";  // HPA (GeneName)
-    public static final String TOKEN_SPECIES = "MjAyMTEyMTcxNTE1MDBfNg%253D%253D"; // canis
+    public static final String TOKEN_OVER_1 = "MjAyNTAyMjExNDE4MjBfNA%253D%253D"; // uniprot (GBM Uniprot)
+    public static final String TOKEN_EXPRESSION_1 = "MjAyNTAyMjExNzA2MDJfNg%253D%253D";  // microarray (probeset)
+    public static final String TOKEN_EXPRESSION_2 = "MjAyNTAzMTMxNDQ2NDhfMTk%253D";  // HPA (GeneName)
+    public static final String TOKEN_CELL = "MjAyNTAzMTMxNDQ2NDhfMTk%253D";  // HPA (GeneName)
+    public static final String TOKEN_SPECIES = "MjAyNTAzMTMxNDQ3MTRfMjA%253D"; // canis
 
-    public static final String TOKEN_GSA = "MjAyMTEyMTcxNTI2MzJfOA%253D%253D";
-    public static final String TOKEN_GSVA = "MjAyMTEyMTcxNTMzNDRfOQ%253D%253D";
+    public static final String TOKEN_GSA = "MjAyNTAzMTMxNDUyNDRfMjY%3D";
+    public static final String TOKEN_GSVA = "MjAyNTAzMTMxNDUxNDJfMjU%3D";
 
     private static final String ANALYSIS_PATH = "src/test/resources/org/reactome/server/tools/diagram/exporter/analysis";
     private static final String DIAGRAM_PATH = "src/test/resources/org/reactome/server/tools/diagram/exporter/diagram";
