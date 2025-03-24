@@ -50,7 +50,7 @@ public class TestUtils {
     private static final String SVG_SUMMARY = "src/test/resources/org/reactome/server/tools/diagram/exporter/svgsummary.txt";
     private static final TokenUtils TOKEN_UTILS = new TokenUtils(ANALYSIS_PATH);
 
-    private static final RasterExporter EXPORTER;
+    public static final RasterExporter EXPORTER;
 
     static {
         EXPORTER = new RasterExporter(DIAGRAM_PATH, EHLD_PATH, ANALYSIS_PATH, SVG_SUMMARY);
