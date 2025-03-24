@@ -245,4 +245,8 @@ public class RasterExporter {
 	private boolean allowAnimatedGif(AnalysisType type) {
 		return type == AnalysisType.EXPRESSION || type == AnalysisType.GSA_REGULATION || type == AnalysisType.GSA_STATISTICS || type == AnalysisType.GSVA;
 	}
+
+	public void addEhld(String stId) {
+		this.ehld.add(stId);
+	}
 }

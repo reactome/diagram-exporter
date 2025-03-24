@@ -103,7 +103,7 @@ public abstract class RenderableEdgeCommon<T extends EdgeCommon> extends Rendera
 				? Color.WHITE
 				: linesColor;
 		// shapes use border color for filling
-		// https://github.com/reactome-pwp/diagram/blob/dev/src/main/java/org/reactome/web/diagram/renderers/layout/abs/ShapeAbstractRenderer.java#L87
+		// https://github.com/reactome/pwp-diagram/blob/dev/src/main/java/org/reactome/web/diagram/renderers/layout/abs/ShapeAbstractRenderer.java#L87
 		// ctx.setFillStyle(ctx.getStrokeStyle());
 		layer.add(awtShape, color, linesColor, stroke);
 		if (shape.getType().equals("DOUBLE_CIRCLE"))

@@ -1,14 +1,6 @@
 package org.reactome.server.tools.diagram.exporter.raster;
 
-import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.properties.HorizontalAlignment;
-import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.transcoder.TranscoderException;
 import org.junit.jupiter.api.Assertions;
 import org.reactome.server.analysis.core.result.AnalysisStoredResult;
@@ -29,7 +21,6 @@ import org.sbgn.SbgnUtil;
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBException;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,6 +39,8 @@ public class TestUtils {
     public static final String TOKEN_CELL = "MjAyNTAzMTMxNDQ2NDhfMTk%253D";  // HPA (GeneName)
     public static final String TOKEN_SPECIES = "MjAyNTAzMTMxNDQ3MTRfMjA%253D"; // canis
 
+    public static final String TOKEN_TISSUE = "MjAyNTAzMTMxNDQ3MzdfMjE%253D"; // tissue with 35 columns
+    public static final String TOKEN_COSMIC = "MjAyNTAzMTMxNDQ4MDhfMjI%253D"; // COSMIC
     public static final String TOKEN_GSA = "MjAyNTAzMTMxNDUyNDRfMjY%3D";
     public static final String TOKEN_GSVA = "MjAyNTAzMTMxNDUxNDJfMjU%3D";
 
@@ -57,7 +50,7 @@ public class TestUtils {
     private static final String SVG_SUMMARY = "src/test/resources/org/reactome/server/tools/diagram/exporter/svgsummary.txt";
     private static final TokenUtils TOKEN_UTILS = new TokenUtils(ANALYSIS_PATH);
 
-    private static final RasterExporter EXPORTER;
+    public static final RasterExporter EXPORTER;
 
     static {
         EXPORTER = new RasterExporter(DIAGRAM_PATH, EHLD_PATH, ANALYSIS_PATH, SVG_SUMMARY);

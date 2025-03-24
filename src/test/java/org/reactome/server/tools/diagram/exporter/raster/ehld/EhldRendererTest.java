@@ -1,6 +1,7 @@
 package org.reactome.server.tools.diagram.exporter.raster.ehld;
 
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.reactome.server.analysis.core.result.AnalysisStoredResult;
 import org.reactome.server.tools.diagram.exporter.BaseTest;
@@ -18,6 +19,21 @@ import java.util.stream.IntStream;
 public class EhldRendererTest extends BaseTest {
 
     Logger log = LoggerFactory.getLogger("diagram-exporter");
+
+
+
+    @Disabled("Disabled because we need the test to pass, but it won't until batik fixes the conversion issue")
+    @Test
+    public void testRadialGradientWithOpacity() {
+        List<String> formats = List.of("pdf", "png");
+        String stId = "radial-gradient";
+        TestUtils.EXPORTER.addEhld(stId);
+        for (String format : formats) {
+            final RasterArgs args = new RasterArgs(stId, format);
+            args.setEhld(true);
+            TestUtils.render(args, null);
+        }
+    }
 
     @Test
     public void testBasicEHLD() {
