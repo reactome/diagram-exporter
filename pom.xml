@@ -100,7 +100,6 @@
 		<nexus-staging-maven-plugin>1.7.0</nexus-staging-maven-plugin>
 	</properties>
 
-	<dependencies>
 		<dependencies>
 			<!-- Reactome dependencies -->
 			<dependency>
