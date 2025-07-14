@@ -5,7 +5,7 @@ import org.reactome.server.tools.diagram.data.layout.Node;
 import org.reactome.server.tools.diagram.data.profile.diagram.DiagramProfile;
 
 /**
- * @author Guilherme S Viteri <gviteri@ebi.ac.uk>
+ * @author Guilherme S Viteri (gviteri@ebi.ac.uk)
  */
 
 @SuppressWarnings("ALL")

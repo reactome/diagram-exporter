@@ -7,7 +7,7 @@ import org.reactome.server.tools.diagram.data.profile.diagram.DiagramProfile;
 import java.awt.*;
 
 /**
- * @author Guilherme S Viteri <gviteri@ebi.ac.uk>
+ * @author Guilherme S Viteri (gviteri@ebi.ac.uk)
  */
 @SuppressWarnings("all")
 public class EncapsulatedPathway extends PPTXNode {

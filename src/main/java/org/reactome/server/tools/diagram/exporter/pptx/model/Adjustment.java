@@ -8,7 +8,7 @@ import org.reactome.server.tools.diagram.data.layout.impl.CoordinateFactory;
  * Class used to rescale the diagram and all the elements present so then it will fit into the slide size. Taking
  * into account the rescaling is implemented because
  *
- * @author Guilherme S Viteri <gviteri@ebi.ac.uk>
+ * @author Guilherme S Viteri (gviteri@ebi.ac.uk)
  */
 public class Adjustment {
 

@@ -29,24 +29,22 @@ package org.reactome.server.tools.diagram.exporter.raster.itext.awt.geom.misc;
  * 
  * If you need order independent hash code just summate, multiply or XOR all
  * elements.
- * 
- * <p>
+ *
  * Suppose we have class:
  * 
- * <pre><code>
+ * <code>
  * class Thing {
  *     long id;
  *     String name;
  *     float weight;
  * }
- * </code></pre>
+ * </code>
  * 
  * The hash code calculation can be expressed in 2 forms.
- * 
- * <p>
+ *
  * For maximum performance:
  * 
- * <pre><code>
+ * <code>
  * public int hashCode() {
  *     int hashCode = HashCode.EMPTY_HASH_CODE;
  *     hashCode = HashCode.combine(hashCode, id);
@@ -54,14 +52,13 @@ package org.reactome.server.tools.diagram.exporter.raster.itext.awt.geom.misc;
  *     hashCode = HashCode.combine(hashCode, weight);
  *     return hashCode;
  * }
- * </code></pre>
- * 
- * <p>
- * For convenience: <code><pre>
+ * </code>
+ *
+ * For convenience: <code>
  * public int hashCode() {
  *     return new HashCode().append(id).append(name).append(weight).hashCode();
  * }
- * </code></pre>
+ * </code>
  * 
  * @see java.util.List#hashCode()
  */

@@ -41,8 +41,9 @@ public class DiagramExporterService {
 	 *
 	 * @return the pptx file
 	 *
-	 * @throws DiagramJsonDeserializationException, DiagramProfileException,
-	 *                                              DiagramJsonNotFoundException
+	 * @throws DiagramJsonDeserializationException
+	 * @throws DiagramProfileException
+	 * @throws DiagramJsonNotFoundException
 	 */
 	public File exportToPPTX(String stId, String diagramJsonFolder, String profileName, String outputFolder, Decorator decorator) throws DiagramJsonDeserializationException, DiagramProfileException, DiagramJsonNotFoundException {
 		return PowerPointExporter.export(stId, diagramJsonFolder, profileName.toLowerCase(), outputFolder, decorator, "");
@@ -64,8 +65,9 @@ public class DiagramExporterService {
 	 *
 	 * @return the pptx file
 	 *
-	 * @throws DiagramJsonDeserializationException, DiagramProfileException,
-	 *                                              DiagramJsonNotFoundException
+	 * @throws DiagramJsonDeserializationException
+	 * @throws DiagramProfileException
+	 * @throws DiagramJsonNotFoundException
 	 */
 	public File exportToPPTX(String stId, String diagramJsonFolder, String profileName, String outputFolder, Decorator decorator, String licenseFilePath) throws DiagramJsonDeserializationException, DiagramProfileException, DiagramJsonNotFoundException {
 		return PowerPointExporter.export(stId, diagramJsonFolder, profileName.toLowerCase(), outputFolder, decorator, licenseFilePath);
@@ -85,8 +87,8 @@ public class DiagramExporterService {
 	 *
 	 * @return the pptx file
 	 *
-	 * @throws DiagramJsonDeserializationException, DiagramProfileException,
-	 *                                              DiagramJsonNotFoundException
+	 * @throws DiagramJsonDeserializationException
+	 * @throws DiagramProfileException
 	 */
 	public File exportToPPTX(Diagram diagram, String profileName, String outputFolder, Decorator decorator) throws DiagramJsonDeserializationException, DiagramProfileException {
 		return PowerPointExporter.export(diagram, profileName.toLowerCase(), outputFolder, decorator, "");
@@ -107,8 +109,8 @@ public class DiagramExporterService {
 	 *
 	 * @return the pptx file
 	 *
-	 * @throws DiagramJsonDeserializationException, DiagramProfileException,
-	 *                                              DiagramJsonNotFoundException
+	 * @throws DiagramJsonDeserializationException
+	 * @throws DiagramProfileException
 	 */
 	public File exportToPPTX(Diagram diagram, String profileName, String outputFolder, Decorator decorator, String licenseFilePath) throws DiagramJsonDeserializationException, DiagramProfileException {
 		return PowerPointExporter.export(diagram, profileName.toLowerCase(), outputFolder, decorator, licenseFilePath);
@@ -129,8 +131,8 @@ public class DiagramExporterService {
 	 *
 	 * @return the pptx file
 	 *
-	 * @throws DiagramJsonDeserializationException, DiagramProfileException,
-	 *                                              DiagramJsonNotFoundException
+	 * @throws DiagramJsonDeserializationException
+	 * @throws DiagramProfileException
 	 */
 	public File exportToPPTX(String stId, Diagram diagram, String profileName, String outputFolder, Decorator decorator) throws DiagramJsonDeserializationException, DiagramProfileException {
 		return PowerPointExporter.export(stId, diagram, profileName.toLowerCase(), outputFolder, decorator, "");
@@ -153,8 +155,8 @@ public class DiagramExporterService {
 	 *
 	 * @return the pptx file
 	 *
-	 * @throws DiagramJsonDeserializationException, DiagramProfileException,
-	 *                                              DiagramJsonNotFoundException
+	 * @throws DiagramJsonDeserializationException
+	 * @throws DiagramProfileException
 	 */
 	public File exportToPPTX(String stId, Diagram diagram, String profileName, String outputFolder, Decorator decorator, String licenseFilePath) throws DiagramJsonDeserializationException, DiagramProfileException {
 		return PowerPointExporter.export(stId, diagram, profileName.toLowerCase(), outputFolder, decorator, licenseFilePath);

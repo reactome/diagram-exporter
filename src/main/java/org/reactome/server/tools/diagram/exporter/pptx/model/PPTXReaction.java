@@ -17,8 +17,8 @@ import static org.reactome.server.tools.diagram.exporter.pptx.util.SegmentUtil.c
 import static org.reactome.server.tools.diagram.exporter.pptx.util.SegmentUtil.drawSegment;
 
 /**
- * @author Antonio Fabregat <fabregat@ebi.ac.uk>
- * @author Guilherme S Viteri <gviteri@ebi.ac.uk>
+ * @author Antonio Fabregat (fabregat@ebi.ac.uk)
+ * @author Guilherme S Viteri (gviteri@ebi.ac.uk)
  */
 public class PPTXReaction {
 

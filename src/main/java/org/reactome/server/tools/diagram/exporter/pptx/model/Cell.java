@@ -10,7 +10,7 @@ import static org.reactome.server.tools.diagram.exporter.pptx.util.PPTXShape.set
 import static org.reactome.server.tools.diagram.exporter.pptx.util.PPTXShape.setTextFrame;
 
 /**
- * @author Guilherme S Viteri <gviteri@ebi.ac.uk>
+ * @author Guilherme S Viteri (gviteri@ebi.ac.uk)
  */
 
 @SuppressWarnings("ALL")

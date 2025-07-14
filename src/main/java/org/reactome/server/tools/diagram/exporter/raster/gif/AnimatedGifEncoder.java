@@ -11,7 +11,7 @@ import java.io.OutputStream;
 /**
  * Class AnimatedGifEncoder - Encodes a GIF file consisting of one or more
  * frames.
- * <p>
+ *
  * <pre>
  *  Example:
  *     AnimatedGifEncoder e = new AnimatedGifEncoder();
@@ -21,7 +21,6 @@ import java.io.OutputStream;
  *     e.addFrame(image2);
  *     e.finish();
  * </pre>
- * <p>
  * No copyright asserted on the source code of this class. May be used for any
  * purpose, however, refer to the Unisys LZW patent for restrictions on use of
  * the associated LZWEncoder class. Please forward any corrections to
@@ -104,7 +103,6 @@ public class AnimatedGifEncoder {
 	 *
 	 * @param iter int number of iterations.
 	 *
-	 * @return
 	 */
 	public void setRepeat(int iter) {
 		if (iter >= 0) {
@@ -224,7 +222,6 @@ public class AnimatedGifEncoder {
 	 *
 	 * @param quality int greater than 0.
 	 *
-	 * @return
 	 */
 	public void setQuality(int quality) {
 		if (quality < 1)

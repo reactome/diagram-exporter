@@ -12,7 +12,7 @@ import static org.reactome.server.tools.diagram.exporter.pptx.util.SegmentUtil.c
 import static org.reactome.server.tools.diagram.exporter.pptx.util.SegmentUtil.drawSegment;
 
 /**
- * @author Antonio Fabregat <fabregat@ebi.ac.uk>
+ * @author Antonio Fabregat (fabregat@ebi.ac.uk)
  */
 public class PPTXLink {
 

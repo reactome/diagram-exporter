@@ -10,7 +10,7 @@ import org.reactome.server.tools.diagram.data.profile.diagram.DiagramProfile;
 import static org.reactome.server.tools.diagram.exporter.pptx.util.PPTXShape.*;
 
 /**
- * @author Guilherme S Viteri <gviteri@ebi.ac.uk>
+ * @author Guilherme S Viteri (gviteri@ebi.ac.uk)
  */
 
 @SuppressWarnings("ALL")

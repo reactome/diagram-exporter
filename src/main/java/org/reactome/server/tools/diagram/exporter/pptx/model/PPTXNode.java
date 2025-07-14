@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 import static org.reactome.server.tools.diagram.exporter.pptx.util.PPTXShape.*;
 
 /**
- * @author Antonio Fabregat <fabregat@ebi.ac.uk>
- * @author Guilherme S Viteri <gviteri@ebi.ac.uk>
+ * @author Antonio Fabregat (fabregat@ebi.ac.uk)
+ * @author Guilherme S Viteri (gviteri@ebi.ac.uk)
  */
 public abstract class PPTXNode {
 

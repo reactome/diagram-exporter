@@ -8,7 +8,7 @@ import org.reactome.server.tools.diagram.data.layout.impl.NodePropertiesFactory;
 import org.reactome.server.tools.diagram.data.profile.diagram.DiagramProfile;
 
 /**
- * @author Guilherme S Viteri <gviteri@ebi.ac.uk>
+ * @author Guilherme S Viteri (gviteri@ebi.ac.uk)
  */
 public class CompartmentNote {
 	private static final String PROFILE_TYPE = "note";

@@ -18,8 +18,8 @@ import java.util.*;
 import static org.reactome.server.tools.diagram.exporter.pptx.util.PPTXShape.reorder;
 
 /**
- * @author Antonio Fabregat <fabregat@ebi.ac.uk>
- * @author Guilherme Viteri <gviteri@ebi.ac.uk>
+ * @author Antonio Fabregat (fabregat@ebi.ac.uk)
+ * @author Guilherme Viteri (gviteri@ebi.ac.uk)
  */
 public class DiagramPresentation {
 
