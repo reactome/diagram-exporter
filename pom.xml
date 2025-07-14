@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>org.reactome.maven</groupId>
 		<artifactId>reactome-parent</artifactId>
 		<version>1.0.6</version>
 	</parent>
+
 	<groupId>org.reactome.server.tools</groupId>
 	<artifactId>diagram-exporter</artifactId>
 	<version>2.1.1</version>
 	<packaging>jar</packaging>
+
 	<name>Diagram Exporter</name>
 	<description>Exports the pathway diagrams to different formats (svg, png, sbgn, pptx, gif, jpeg)</description>
 	<url>https://reactome.org</url>
-
 	<organization>
 		<name>Reactome</name>
 		<url>https://reactome.org</url>
@@ -100,7 +102,7 @@
 		<nexus-staging-maven-plugin>1.7.0</nexus-staging-maven-plugin>
 	</properties>
 
-		<dependencies>
+	<dependencies>
 			<!-- Reactome dependencies -->
 			<dependency>
 				<groupId>org.reactome.server.graph</groupId>
@@ -167,8 +169,7 @@
 				<groupId>com.itextpdf</groupId>
 				<artifactId>io</artifactId>
 			</dependency>
-			<dependency>
-				<!--    SVG to PDF conversion for EHLDs    -->
+			<dependency><!--    SVG to PDF conversion for EHLDs    -->
 				<groupId>org.apache.xmlgraphics</groupId>
 				<artifactId>fop-core</artifactId>
 			</dependency>
