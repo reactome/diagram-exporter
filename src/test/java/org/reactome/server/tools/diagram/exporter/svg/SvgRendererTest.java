@@ -1,13 +1,14 @@
 package org.reactome.server.tools.diagram.exporter.svg;
 
 import org.junit.jupiter.api.Test;
+import org.reactome.server.tools.diagram.exporter.BaseTest;
 import org.reactome.server.tools.diagram.exporter.raster.TestUtils;
 import org.reactome.server.tools.diagram.exporter.raster.api.RasterArgs;
 import org.reactome.server.tools.diagram.exporter.raster.profiles.ColorProfiles;
 
 import java.util.Collections;
 
-public class SvgRendererTest {
+public class SvgRendererTest extends BaseTest {
 
 	@Test
 	public void testDiagram() {
