@@ -53,7 +53,7 @@ jobs:
             
             # below is process to push to ECR
             # private ECR registry is used due to license
-            - if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+            - if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
               id: get-hash
               run: |
                 FULL_SHA=${{ github.sha }}
