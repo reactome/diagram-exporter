@@ -79,3 +79,5 @@ jobs:
               run: |
                 docker image tag tmp-tag $AWS_REGISTRY/$AWS_REPO:$IMG_TAG
                 docker push $AWS_REGISTRY/$AWS_REPO:$IMG_TAG
+                docker image tag tmp-tag $AWS_REGISTRY/$AWS_REPO:latest
+                docker push $AWS_REGISTRY/$AWS_REPO:latest
