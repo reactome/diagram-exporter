@@ -65,7 +65,7 @@ pipeline{
 						   -v ${diagramFolderPath}:/data/diagram:ro \\
                                                    -v ${ehldFolderPath}:/data/ehld:ro \\
                                                    -v ${pwd()}/output:/app/output \\
-						   --net=host
+						   --net=host \\
 						   --name ${CONT_NAME}_SVG \\
 						       ${ECR_URL}:latest \\
 	                                               /bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --user \$user --password \$pass --format svg --input /data/diagram --ehld /data/ehld --summary /data/ehld/svgsummary.txt --target \"Homo sapiens\" --output /app/output --verbose"
@@ -76,7 +76,7 @@ pipeline{
 						   -v ${diagramFolderPath}:/data/diagram:ro \\
                                                    -v ${ehldFolderPath}:/data/ehld:ro \\
                                                    -v ${pwd()}/output:/app/output \\
-						   --net=host
+						   --net=host \\
 						   --name ${CONT_NAME}_PNG \\
 						       ${ECR_URL}:latest \\
 					   	   /bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --user \$user --password \$pass --format png --input /data/diagram --ehld /data/ehld --summary /data/ehld/svgsummary.txt --target \"Homo sapiens\" --output /app/output --verbose"
@@ -87,7 +87,7 @@ pipeline{
 						   -v ${diagramFolderPath}:/data/diagram:ro \\
                                                    -v ${ehldFolderPath}:/data/ehld:ro \\
                                                    -v ${pwd()}/output:/app/output \\
-						   --net=host
+						   --net=host \\
 						   --name ${CONT_NAME}_SBGN \\
 						       ${ECR_URL}:latest \\
 					   	   /bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --user \$user --password \$pass --format sbgn --input /data/diagram --target \"Homo sapiens\" --output /app/output --verbose"
