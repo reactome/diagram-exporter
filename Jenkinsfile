@@ -10,8 +10,9 @@ pipeline{
 
 	environment {
 		ECR_URL = '851227637779.dkr.ecr.us-east-1.amazonaws.com/diagram-exporter'
-	        CONT_NAME = 'diagram_exporter_container'
-        }
+		ECR_SERVER = '851227637779.dkr.ecr.us-east-1.amazonaws.com'
+	    CONT_NAME = 'diagram_exporter_container'
+    }
 	
 	stages{
 		// This stage checks that the upstream project DiagramConverter was run successfully.
@@ -28,7 +29,7 @@ pipeline{
                 script {
                     sh """
                         aws ecr get-login-password --region us-east-1 | \
-                        docker login --username AWS --password-stdin 851227637779.dkr.ecr.us-east-1.amazonaws.com
+                        docker login --username AWS --password-stdin ${ECR_SERVER}
                     """
                 }
 			}
@@ -121,6 +122,15 @@ pipeline{
 			}
 		}
 
+        stage('Logout from AWS ECR') {
+            steps {
+                script {
+                    echo "Logging out from AWS ECR..."
+                    sh "docker logout ${ECR_SERVER}"
+                }
+            }
+        }
+		
 		stage('Post: Generate DiagramExporter archives and move them to the downloads folder') {
 		    steps{
 		        script{
