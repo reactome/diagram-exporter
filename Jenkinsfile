@@ -31,7 +31,8 @@ pipeline{
                         docker login --username AWS --password-stdin 851227637779.dkr.ecr.us-east-1.amazonaws.com
                     """
                 }
-         }
+			}
+        }
 
 		
 		stage('Pull diagram exporter Docker container') {
