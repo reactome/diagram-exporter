@@ -22,15 +22,27 @@ pipeline{
 				}
 			}
 		}
+
+        stage('Login to AWS ECR') {
+            steps {
+                script {
+                    sh """
+                        aws ecr get-login-password --region us-east-1 | \
+                        docker login --username AWS --password-stdin 851227637779.dkr.ecr.us-east-1.amazonaws.com
+                    """
+                }
+         }
+
+		
 		stage('Pull diagram exporter Docker container') {
 			steps{
 				script {
-                			sh "docker pull ${ECR_URL}:latest"
+                	sh "docker pull ${ECR_URL}:latest"
 					sh """
 						if docker ps -a --format '{{.Names}}' | grep -Eq '${CONT_NAME}'; then
 							docker rm -f ${CONT_NAME}_SVG
-                                                        docker rm -f ${CONT_NAME}_PNG
-                                                        docker rm -f ${CONT_NAME}_SBGN
+                            docker rm -f ${CONT_NAME}_PNG
+                            docker rm -f ${CONT_NAME}_SBGN
 						fi
 					"""
 				}
@@ -58,44 +70,56 @@ pipeline{
 						}
 					}
 					sh "mkdir -p output"
-					sh "rm -rf output/*"
-					withCredentials([usernamePassword(credentialsId: 'neo4jUsernamePassword', passwordVariable: 'pass', usernameVariable: 'user')]){
-						sh """
-                                                   docker run \\
-						   -v ${diagramFolderPath}:/data/diagram:ro \\
-                                                   -v ${ehldFolderPath}:/data/ehld:ro \\
-                                                   -v ${pwd()}/output:/app/output \\
-						   --net=host \\
-						   --name ${CONT_NAME}_SVG \\
-						       ${ECR_URL}:latest \\
-	                                               /bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --user \$user --password \$pass --format svg --input /data/diagram --ehld /data/ehld --summary /data/ehld/svgsummary.txt --target \"Homo sapiens\" --output /app/output --verbose"
-                                                """
+					sh "sudo rm -rf output/*"
+					sh "mkdir -p logs/svg logs/png logs/sbgn"
+					sh "sudo rm -rf logs/svg/* logs/png/* logs/sbgn/*"
+					
+					try {
+                        sh "sudo service tomcat9 stop"
+					    withCredentials([usernamePassword(credentialsId: 'neo4jUsernamePassword', passwordVariable: 'pass', usernameVariable: 'user')]){
+						    sh """
+                                docker run \\
+						            -v ${diagramFolderPath}:/data/diagram:ro \\
+                                    -v ${ehldFolderPath}:/data/ehld:ro \\
+                                    -v ${pwd()}/output:/app/output \\
+                                    -v ${pwd()}/logs/svg:/opt/diagram-exporter/logs \\
+						            --net=host \\
+						            --name ${CONT_NAME}_SVG \\
+						            ${ECR_URL}:latest \\
+	                                /bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar  --format svg --user $user --password \'$pass\' --input /data/diagram --ehld /data/ehld --summary /data/ehld/svgsummary.txt --target \'Homo sapiens\' --output /app/output --verbose" \\
+                               """
 
-						sh """
-                                                   docker run \\
-						   -v ${diagramFolderPath}:/data/diagram:ro \\
-                                                   -v ${ehldFolderPath}:/data/ehld:ro \\
-                                                   -v ${pwd()}/output:/app/output \\
-						   --net=host \\
-						   --name ${CONT_NAME}_PNG \\
-						       ${ECR_URL}:latest \\
-					   	   /bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --user \$user --password \$pass --format png --input /data/diagram --ehld /data/ehld --summary /data/ehld/svgsummary.txt --target \"Homo sapiens\" --output /app/output --verbose"
-	                                        """
+						    sh """
+                                docker run \\
+						            -v ${diagramFolderPath}:/data/diagram:ro \\
+                                    -v ${ehldFolderPath}:/data/ehld:ro \\
+                                    -v ${pwd()}/output:/app/output \\
+                                    -v ${pwd()}/logs/png:/opt/diagram-exporter/logs \\
+						            --net=host \\
+						            --name ${CONT_NAME}_PNG \\
+						            ${ECR_URL}:latest \\
+					   	            /bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --user $user --password \'$pass\' --format png --input /data/diagram --ehld /data/ehld --summary /data/ehld/svgsummary.txt --target \"Homo sapiens\" --output /app/output --verbose"
+	                           """
 						
-						sh """
-                                                   docker run \\
-						   -v ${diagramFolderPath}:/data/diagram:ro \\
-                                                   -v ${ehldFolderPath}:/data/ehld:ro \\
-                                                   -v ${pwd()}/output:/app/output \\
-						   --net=host \\
-						   --name ${CONT_NAME}_SBGN \\
-						       ${ECR_URL}:latest \\
-					   	   /bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --user \$user --password \$pass --format sbgn --input /data/diagram --target \"Homo sapiens\" --output /app/output --verbose"
-	                                       """
-					}
+						    sh """
+                                docker run \\
+						            -v ${diagramFolderPath}:/data/diagram:ro \\
+                                    -v ${ehldFolderPath}:/data/ehld:ro \\
+                                    -v ${pwd()}/output:/app/output \\
+                                    -v ${pwd()}/logs/sbgn:/opt/diagram-exporter/logs \\
+						            --net=host \\
+						            --name ${CONT_NAME}_SBGN \\
+						            ${ECR_URL}:latest \\
+					   	            /bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --user $user --password \'$pass\' --format sbgn --input /data/diagram --target \"Homo sapiens\" --output /app/output --verbose"
+	                           """
+					    }
+					} finally {
+                        sh "sudo service tomcat9 start"
+                    }
 				}
 			}
 		}
+
 		stage('Post: Generate DiagramExporter archives and move them to the downloads folder') {
 		    steps{
 		        script{
@@ -121,7 +145,7 @@ pipeline{
 				script{
 					def releaseVersion = utils.getReleaseVersion()
 					def dataFiles = ["diagrams.svg.tgz", "diagrams.png.tgz", "homo_sapiens.sbgn.tar.gz"]
-					def logFiles = []
+					def logFiles = ["logs/*"]
 					def foldersToDelete = ["output"]
 					utils.cleanUpAndArchiveBuildFiles("diagram_exporter", dataFiles, logFiles, foldersToDelete)
 				}
