@@ -1,469 +1,514 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.reactome.maven</groupId>
-    <artifactId>reactome-parent</artifactId>
-    <version>1.0.5</version>
-  </parent>
-  <groupId>org.reactome.server.tools</groupId>
-  <artifactId>diagram-exporter</artifactId>
-  <version>2.1.0</version>
-  <packaging>jar</packaging>
-  <name>Diagram Exporter</name>
-  <description>Exports the pathway diagrams to different formats (svg, png, sbgn, pptx, gif, jpeg)</description>
-  <url>https://reactome.org</url>
-  <organization>
-    <name>The European Bioinformatics Institute</name>
-    <url>https://www.ebi.ac.uk/</url>
-  </organization>
-  <developers>
-    <developer>
-      <id>gviteri</id>
-      <name>Guilherme Viteri</name>
-      <email>gviteri@ebi.ac.uk</email>
-      <organization>https://www.ebi.ac.uk/</organization>
-    </developer>
-    <developer>
-      <id>plorente</id>
-      <name>Pascual Lorente</name>
-    </developer>
-    <developer>
-      <id>amundo</id>
-    </developer>
-  </developers>
-  <properties>
-    <!--build-->
-    <dependency.locations.enabled>false</dependency.locations.enabled>
-    <main.class>org.reactome.server.tools.diagram.exporter.Main</main.class>
-    <!-- maven assembly plugin configuration -->
-    <!-- CAREFUL: when deploying to Nexus or any public repo make the "exec" isn't uploaded -->
-    <!--          PowerPoint paid license is part of the project and shouldn't be available to the public -->
-    <!-- to deploy in nexus: mvn -Psafe-deploy deploy -->
-    <skip.deploy>true</skip.deploy>
-    <skip.repackage>false</skip.repackage>
-    <!-- true: saves all images in the project root folder for manually check -->
-    <test.save>false</test.save>
-  </properties>
-  <dependencies>
-    <!-- Reactome dependencies -->
-    <dependency>
-      <groupId>org.reactome.server.graph</groupId>
-      <artifactId>graph-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.reactome.server.tools</groupId>
-      <artifactId>diagram-reader</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.reactome.server.tools</groupId>
-      <artifactId>analysis-core</artifactId>
-    </dependency>
-    <!-- EHLD related dependencies -->
-    <dependency>
-      <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>batik-transcoder</artifactId>
-      <version>1.18</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>batik-codec</artifactId>
-      <version>1.18</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sbgn</groupId>
-      <artifactId>libsbgn</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.aspose</groupId>
-      <artifactId>aspose-slides</artifactId>
-      <classifier>jdk16</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <!--Logback classic-->
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-    </dependency>
-    <!--JSAP console reader-->
-    <dependency>
-      <groupId>com.martiansoftware</groupId>
-      <artifactId>jsap</artifactId>
-    </dependency>
-    <!--    PDF Generation    -->
-    <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>layout</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>kernel</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.itextpdf</groupId>
-      <artifactId>io</artifactId>
-    </dependency>
-    <dependency>
-      <!--    SVG to PDF conversion for EHLDs    -->
-      <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>fop-core</artifactId>
-    </dependency>
-    <!-- Help to load JAXBException-->
-    <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/javax.activation/activation -->
-    <dependency>
-      <groupId>javax.activation</groupId>
-      <artifactId>activation</artifactId>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
-    <dependency>
-      <groupId>org.glassfish.jaxb</groupId>
-      <artifactId>jaxb-runtime</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-  <profiles>
-    <profile>
-      <!-- CAREFUL: when deploying to Nexus or any public repo make the "jar-with-dependencies" isn't uploaded -->
-      <!--          PowerPoint paid license is part of the project and shouldn't be available to the public -->
-      <!-- to deploy in nexus: mvn -Psafe-deploy deploy -->
-      <id>safe-deploy</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <version>${maven.jar.version}</version>
-            <executions>
-              <execution>
-                <id>default-jar</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-                <configuration>
-                  <excludes>
-                    <exclude>org/reactome/server/tools/diagram/exporter/Main.class</exclude>
-                    <exclude>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.reactome.maven</groupId>
+        <artifactId>reactome-parent</artifactId>
+        <version>1.0.5-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.reactome.server.tools</groupId>
+    <artifactId>diagram-exporter</artifactId>
+    <version>2.0.13-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+	<name>Diagram Exporter</name>
+
+	<description>Exports the pathway diagrams to different formats (svg, png, sbgn, pptx, gif, jpeg)</description>
+	<url>https://reactome.org</url>
+	<organization>
+		<name>The European Bioinformatics Institute</name>
+		<url>https://www.ebi.ac.uk/</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>gviteri</id>
+			<name>Guilherme Viteri</name>
+			<email>gviteri@ebi.ac.uk</email>
+			<organization>https://www.ebi.ac.uk/</organization>
+		</developer>
+		<developer>
+			<id>plorente</id>
+			<name>Pascual Lorente</name>
+		</developer>
+		<developer>
+			<id>amundo</id>
+		</developer>
+	</developers>
+
+	<properties>
+		<!--build-->
+		<dependency.locations.enabled>false</dependency.locations.enabled>
+		<main.class>org.reactome.server.tools.diagram.exporter.Main</main.class>
+
+		<!-- maven assembly plugin configuration -->
+		<!-- CAREFUL: when deploying to Nexus or any public repo make the "exec" isn't uploaded -->
+		<!--          PowerPoint paid license is part of the project and shouldn't be available to the public -->
+		<!-- to deploy in nexus: mvn -Psafe-deploy deploy -->
+		<skip.deploy>true</skip.deploy>
+		<skip.repackage>false</skip.repackage>
+
+		<!-- true: saves all images in the project root folder for manually check -->
+		<test.save>false</test.save>
+	</properties>
+
+	<dependencies>
+		<!-- Reactome dependencies -->
+		<dependency>
+			<groupId>org.reactome.server.graph</groupId>
+			<artifactId>graph-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.reactome.server.tools</groupId>
+			<artifactId>diagram-reader</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.reactome.server.tools</groupId>
+			<artifactId>analysis-core</artifactId>
+		</dependency>
+
+        <!-- EHLD related dependencies -->
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-transcoder</artifactId>
+            <version>1.18</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-codec</artifactId>
+            <version>1.18</version>
+        </dependency>
+
+		<dependency>
+			<groupId>org.sbgn</groupId>
+			<artifactId>libsbgn</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.aspose</groupId>
+			<artifactId>aspose-slides</artifactId>
+			<classifier>jdk16</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!--Logback classic-->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+
+		<!--JSAP console reader-->
+		<dependency>
+			<groupId>com.martiansoftware</groupId>
+			<artifactId>jsap</artifactId>
+		</dependency>
+
+		<!--    PDF Generation    -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>layout</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>kernel</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>io</artifactId>
+		</dependency>
+
+		<dependency>
+			<!--    SVG to PDF conversion for EHLDs    -->
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>fop-core</artifactId>
+		</dependency>
+
+		<!-- Help to load JAXBException-->
+		<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/javax.activation/activation -->
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<profiles>
+		<profile>
+
+			<!-- CAREFUL: when deploying to Nexus or any public repo make the "jar-with-dependencies" isn't uploaded -->
+			<!--          PowerPoint paid license is part of the project and shouldn't be available to the public -->
+			<!-- to deploy in nexus: mvn -Psafe-deploy deploy -->
+			<id>safe-deploy</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>${maven.jar.version}</version>
+						<executions>
+							<execution>
+								<id>default-jar</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<excludes>
+										<exclude>org/reactome/server/tools/diagram/exporter/Main.class</exclude>
+										<exclude>
 											org/reactome/server/tools/diagram/exporter/config/ReactomeNeo4jConfig.class
 										</exclude>
-                    <exclude>**/logback.xml</exclude>
-                    <exclude>**/license/</exclude>
-                  </excludes>
-                </configuration>
-              </execution>
-              <execution>
-                <id>exec-jar</id>
-                <!-- to hide exec-jar when deploy to nexus -->
-                <phase>none</phase>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-                <configuration>
-                  <classifier>exec</classifier>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-      <properties>
-        <skip.deploy>false</skip.deploy>
-        <skip.repackage>true</skip.repackage>
-      </properties>
-    </profile>
-  </profiles>
-  <build>
-    <finalName>diagram-exporter</finalName>
-    <!-- Add this if you are having problems with the fonts resources -->
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-        <excludes>
-          <exclude>**/*.ttf</exclude>
-        </excludes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>false</filtering>
-        <includes>
-          <include>**/*.ttf</include>
-        </includes>
-      </resource>
-    </resources>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <filtering>true</filtering>
-        <excludes>
-          <!--                    <exclude>**/*.ttf</exclude>-->
-          <exclude>**/*.bin</exclude>
-        </excludes>
-      </testResource>
-    </testResources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven.compiler.version}</version>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>${maven.jar.version}</version>
-        <executions>
-          <execution>
-            <id>default-jar</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <excludes>
-                <exclude>org/reactome/server/tools/diagram/exporter/Main.class</exclude>
-                <exclude>org/reactome/server/tools/diagram/exporter/config/ReactomeNeo4jConfig.class
+										<exclude>**/logback.xml</exclude>
+										<exclude>**/license/</exclude>
+									</excludes>
+								</configuration>
+							</execution>
+							<execution>
+								<id>exec-jar</id>
+								<!-- to hide exec-jar when deploy to nexus -->
+								<phase>none</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<classifier>exec</classifier>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<properties>
+				<skip.deploy>false</skip.deploy>
+				<skip.repackage>true</skip.repackage>
+			</properties>
+		</profile>
+	</profiles>
+
+	<build>
+		<finalName>diagram-exporter</finalName>
+		<!-- Add this if you are having problems with the fonts resources -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>**/*.ttf</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.ttf</include>
+				</includes>
+			</resource>
+
+		</resources>
+
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+<!--                    <exclude>**/*.ttf</exclude>-->
+					<exclude>**/*.bin</exclude>
+				</excludes>
+			</testResource>
+		</testResources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.version}</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven.jar.version}</version>
+				<executions>
+					<execution>
+						<id>default-jar</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>org/reactome/server/tools/diagram/exporter/Main.class</exclude>
+								<exclude>org/reactome/server/tools/diagram/exporter/config/ReactomeNeo4jConfig.class
 								</exclude>
-                <exclude>**/logback.xml</exclude>
-                <exclude>**/license/</exclude>
-              </excludes>
-            </configuration>
-          </execution>
-          <execution>
-            <id>exec-jar</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <classifier>exec</classifier>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${spring-boot.version}</version>
-        <configuration>
-          <attach>false</attach>
-          <classifier>exec</classifier>
-          <mainClass>${main.class}</mainClass>
-          <skip>${skip.repackage}</skip>
-          <layout>JAR</layout>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>repackage</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- CAREFUL: when deploying to Nexus or any public repo make the "exec-jar" isn't uploaded. -->
-      <!--          PowerPoint paid license is part of the project and shouldn't be available to the public -->
-      <!-- to deploy in nexus: mvn -Psafe-deploy deploy -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>${maven.deploy.version}</version>
-        <executions>
-          <execution>
-            <id>default-deploy</id>
-            <goals>
-              <goal>deploy</goal>
-            </goals>
-            <configuration>
-              <skip>${skip.deploy}</skip>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>${maven.install.version}</version>
-        <executions>
-          <execution>
-            <id>default-install</id>
-            <goals>
-              <goal>install</goal>
-            </goals>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </execution>
-          <execution>
-            <id>install-jar</id>
-            <phase>install</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-            <configuration>
-              <file>target/${project.build.finalName}.jar</file>
-              <sources>target/${project.build.finalName}-sources.jar</sources>
-              <pomFile>pom.xml</pomFile>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven.surefire.version}</version>
-        <configuration>
-          <useSystemClassLoader>true</useSystemClassLoader>
-          <forkMode>always</forkMode>
-          <test>*Test.java</test>
-          <!-- Configure the Neo4j database for testcase -->
-          <systemPropertyVariables>
-            <test.save>${test.save}</test.save>
-          </systemPropertyVariables>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.1.0</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>${maven.source.version}</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-            <configuration>
-              <excludes>
-                <exclude>**/license/</exclude>
-              </excludes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.1.1</version>
-        <dependencies>
-          <!-- This dependency allows Checkstyle to understand Java 11 syntax -->
-          <dependency>
-            <groupId>com.puppycrawl.tools</groupId>
-            <artifactId>checkstyle</artifactId>
-            <version>8.44</version>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <id>checkstyle-check</id>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <configLocation>checkstyle.xml</configLocation>
-          <!-- Optional: Set encoding -->
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <!-- Repositories -->
-  <repositories>
-    <!-- MAVEN central -->
-    <repository>
-      <id>central</id>
-      <name>Maven Repository Switchboard</name>
-      <layout>default</layout>
-      <url>https://repo1.maven.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>central-bck</id>
-      <name>Maven Repository Switchboard</name>
-      <layout>default</layout>
-      <url>https://repo1.maven.org/maven/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
-    <repository>
-      <id>aspose-maven-repository</id>
-      <url>https://artifact.aspose.com/repo/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>mygrid-maven-repository</id>
-      <url>https://www.mygrid.org.uk/maven/repository/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <!-- BIOPAX repo -->
-    <repository>
-      <id>biopax-repo</id>
-      <name>BioPAX repository</name>
-      <url>https://www.biopax.org/m2repo/releases</url>
-    </repository>
-    <!-- EBI repo -->
-    <repository>
-      <id>nexus-ebi-repo</id>
-      <name>The EBI internal repository</name>
-      <url>https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <!-- EBI SNAPSHOT repo -->
-    <repository>
-      <id>nexus-ebi-snapshot-repo</id>
-      <name>The EBI internal snapshot repository</name>
-      <url>https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
+								<exclude>**/logback.xml</exclude>
+								<exclude>**/license/</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>exec-jar</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>exec</classifier>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot.version}</version>
+				<configuration>
+					<attach>false</attach>
+					<classifier>exec</classifier>
+					<mainClass>${main.class}</mainClass>
+					<skip>${skip.repackage}</skip>
+					<layout>JAR</layout>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- CAREFUL: when deploying to Nexus or any public repo make the "exec-jar" isn't uploaded. -->
+			<!--          PowerPoint paid license is part of the project and shouldn't be available to the public -->
+			<!-- to deploy in nexus: mvn -Psafe-deploy deploy -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>${maven.deploy.version}</version>
+				<executions>
+					<execution>
+						<id>default-deploy</id>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+						<configuration>
+							<skip>${skip.deploy}</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>${maven.install.version}</version>
+				<executions>
+					<execution>
+						<id>default-install</id>
+						<goals>
+							<goal>install</goal>
+						</goals>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</execution>
+					<execution>
+						<id>install-jar</id>
+						<phase>install</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>target/${project.build.finalName}.jar</file>
+							<sources>target/${project.build.finalName}-sources.jar</sources>
+							<pomFile>pom.xml</pomFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven.surefire.version}</version>
+				<configuration>
+					<useSystemClassLoader>true</useSystemClassLoader>
+					<forkMode>always</forkMode>
+					<test>*Test.java</test>
+					<!-- Configure the Neo4j database for testcase -->
+					<systemPropertyVariables>
+						<test.save>${test.save}</test.save>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven.source.version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/license/</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.1.1</version>
+				<dependencies>
+					<!-- This dependency allows Checkstyle to understand Java 11 syntax -->
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>8.44</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>checkstyle-check</id>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<configLocation>checkstyle.xml</configLocation>
+					<!-- Optional: Set encoding -->
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!-- Repositories -->
+	<repositories>
+
+		<!-- MAVEN central -->
+		<repository>
+			<id>central</id>
+			<name>Maven Repository Switchboard</name>
+			<layout>default</layout>
+			<url>https://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>central-bck</id>
+			<name>Maven Repository Switchboard</name>
+			<layout>default</layout>
+			<url>https://repo1.maven.org/maven/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+
+		<repository>
+			<id>aspose-maven-repository</id>
+			<url>https://artifact.aspose.com/repo/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+		<repository>
+			<id>mygrid-maven-repository</id>
+			<url>https://www.mygrid.org.uk/maven/repository/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+		<!-- BIOPAX repo -->
+		<repository>
+			<id>biopax-repo</id>
+			<name>BioPAX repository</name>
+			<url>https://www.biopax.org/m2repo/releases</url>
+		</repository>
+
+		<!-- EBI repo -->
+		<repository>
+			<id>nexus-ebi-repo</id>
+			<name>The EBI internal repository</name>
+			<url>https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<!-- EBI SNAPSHOT repo -->
+		<repository>
+			<id>nexus-ebi-snapshot-repo</id>
+			<name>The EBI internal snapshot repository</name>
+			<url>https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 </project>
