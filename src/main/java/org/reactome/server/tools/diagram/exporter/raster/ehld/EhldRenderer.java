@@ -258,6 +258,7 @@ public class EhldRenderer implements RasterRenderer {
         document.setMargins(0, 0, 0, 0);
 
         try {
+            addOmittedGradientStops();
             TranscoderInput input = new TranscoderInput(this.document);
             TranscoderOutput output = new TranscoderOutput(os);
             PDFTranscoder pdfTranscoder = new PDFTranscoder();
@@ -272,6 +273,18 @@ public class EhldRenderer implements RasterRenderer {
         } catch (Exception e) { // Avoid PDF cross reference mismatch problem
         }
         return document;
+    }
+
+    private void addOmittedGradientStops() {
+        NodeList stops = this.document.getRootElement().getElementsByTagNameNS(SVG_NAMESPACE_URI, SVG_STOP_TAG);
+        final List<Element> stopNodes = IntStream.range(0, stops.getLength())
+                .mapToObj(stops::item)
+                .map(Element.class::cast)
+                .collect(Collectors.toList());
+        stopNodes.forEach(stop -> {
+            String offset = stop.getAttribute("offset");
+            if (offset.isEmpty()) stop.setAttribute("offset", "0");
+        });
     }
 
     /**
