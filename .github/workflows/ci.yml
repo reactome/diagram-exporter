@@ -8,7 +8,7 @@ on:
             - synchronize
     push:
         branches:
-            - master
+            - main
 
 permissions:
     id-token: write
@@ -53,7 +53,7 @@ jobs:
             
             # below is process to push to ECR
             # private ECR registry is used due to license
-            - if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+            - if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
               id: get-hash
               run: |
                 FULL_SHA=${{ github.sha }}
@@ -79,3 +79,5 @@ jobs:
               run: |
                 docker image tag tmp-tag $AWS_REGISTRY/$AWS_REPO:$IMG_TAG
                 docker push $AWS_REGISTRY/$AWS_REPO:$IMG_TAG
+                docker image tag tmp-tag $AWS_REGISTRY/$AWS_REPO:latest
+                docker push $AWS_REGISTRY/$AWS_REPO:latest
