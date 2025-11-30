@@ -131,14 +131,14 @@ public class EhldRenderer implements RasterRenderer {
     public Dimension getDimension() {
         final String viewBox = document.getRootElement().getAttribute(SVG_VIEW_BOX_ATTRIBUTE);
         final String[] values = viewBox.split(" ");
-        final double width = Double.valueOf(values[2]);
-        final double height = Double.valueOf(values[3]);
+        final double width = Double.parseDouble(values[2]);
+        final double height = Double.parseDouble(values[3]);
         return new Dimension((int) (width + 0.5), (int) (height + 0.5));
     }
 
     @Override
     public BufferedImage render() {
-        disableMasks();
+//        disableMasks();
         return rasterize();
     }
 
@@ -225,7 +225,7 @@ public class EhldRenderer implements RasterRenderer {
                 && svgAnalysis.getAnalysisType() != AnalysisType.GSVA)
             throw new IllegalStateException("Only EXPRESSION and GENE SET (GSA) analysis can be rendered into animated GIFs");
 
-        disableMasks();
+//        disableMasks();
         final AnimatedGifEncoder encoder = new AnimatedGifEncoder();
         encoder.setDelay(1000);
         encoder.setRepeat(0);
@@ -258,6 +258,7 @@ public class EhldRenderer implements RasterRenderer {
         document.setMargins(0, 0, 0, 0);
 
         try {
+            addOmittedGradientStops();
             TranscoderInput input = new TranscoderInput(this.document);
             TranscoderOutput output = new TranscoderOutput(os);
             PDFTranscoder pdfTranscoder = new PDFTranscoder();
@@ -272,6 +273,18 @@ public class EhldRenderer implements RasterRenderer {
         } catch (Exception e) { // Avoid PDF cross reference mismatch problem
         }
         return document;
+    }
+
+    private void addOmittedGradientStops() {
+        NodeList stops = this.document.getRootElement().getElementsByTagNameNS(SVG_NAMESPACE_URI, SVG_STOP_TAG);
+        final List<Element> stopNodes = IntStream.range(0, stops.getLength())
+                .mapToObj(stops::item)
+                .map(Element.class::cast)
+                .collect(Collectors.toList());
+        stopNodes.forEach(stop -> {
+            String offset = stop.getAttribute("offset");
+            if (offset.isEmpty()) stop.setAttribute("offset", "0");
+        });
     }
 
     /**
