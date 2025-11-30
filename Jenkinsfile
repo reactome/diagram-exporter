@@ -134,19 +134,19 @@ pipeline{
 		stage('Post: Generate DiagramExporter archives and move them to the downloads folder') {
 		    steps{
 		        script{
-				def releaseVersion = utils.getReleaseVersion()
-				def svgArchive = "diagrams.svg.tgz"
-				def pngArchive = "diagrams.png.tgz"
-				def sbgnArchive = "homo_sapiens.sbgn.tar.gz"
-				def downloadPath = "${env.ABS_DOWNLOAD_PATH}/${releaseVersion}"
-
-				sh "cd output/svg/Modern/; tar -zcf ${svgArchive} *.svg; mv ${svgArchive} ../../"
-				sh "cd output/png/Modern/; tar -zcf ${pngArchive} *.png; mv ${pngArchive} ../../"
-				sh "cd output/sbgn/; tar -zcf ${sbgnArchive} *.sbgn; mv ${sbgnArchive} ../"
-
-				sh "cp ${svgArchive} ${downloadPath}/"
-				sh "cp ${pngArchive} ${downloadPath}/"
-				sh "cp ${sbgnArchive} ${downloadPath}/"
+					def releaseVersion = utils.getReleaseVersion()
+					def svgArchive = "diagrams.svg.tgz"
+					def pngArchive = "diagrams.png.tgz"
+					def sbgnArchive = "homo_sapiens.sbgn.tar.gz"
+					def downloadPath = "${env.ABS_DOWNLOAD_PATH}/${releaseVersion}"
+	
+					sh "cd output/svg/Modern/; tar -zcf ${svgArchive} *.svg; mv ${svgArchive} ../../../"
+					sh "cd output/png/Modern/; tar -zcf ${pngArchive} *.png; mv ${pngArchive} ../../../"
+					sh "cd output/sbgn/; tar -zcf ${sbgnArchive} *.sbgn; mv ${sbgnArchive} ../../"
+	
+					sh "cp ${svgArchive} ${downloadPath}/"
+					sh "cp ${pngArchive} ${downloadPath}/"
+					sh "cp ${sbgnArchive} ${downloadPath}/"
 		        }
 		    }
 		}
