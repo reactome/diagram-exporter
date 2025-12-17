@@ -43,6 +43,7 @@
 		<!--build-->
 		<dependency.locations.enabled>false</dependency.locations.enabled>
 		<main.class>org.reactome.server.tools.diagram.exporter.Main</main.class>
+		<verifier.main.class>org.reactome.server.tools.diagram.exporter.verifier.DiagramExporterVerifier</verifier.main.class>
 
 		<!-- maven assembly plugin configuration -->
 		<!-- CAREFUL: when deploying to Nexus or any public repo make the "exec" isn't uploaded -->
@@ -160,6 +161,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.reactome.release.verifier</groupId>
+			<artifactId>verifier-lib</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>
@@ -295,21 +302,38 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${spring-boot.version}</version>
-				<configuration>
-					<attach>false</attach>
-					<classifier>exec</classifier>
-					<mainClass>${main.class}</mainClass>
-					<skip>${skip.repackage}</skip>
-					<layout>JAR</layout>
-				</configuration>
+
 				<executions>
+					<!-- Main executable -->
 					<execution>
+						<id>repackage-main</id>
 						<goals>
 							<goal>repackage</goal>
 						</goals>
+						<configuration>
+							<classifier>exec</classifier>
+							<mainClass>${main.class}</mainClass>
+							<skip>${skip.repackage}</skip>
+							<layout>JAR</layout>
+						</configuration>
+					</execution>
+
+					<!-- Second executable (verifier) -->
+					<execution>
+						<id>repackage-verifier</id>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<classifier>verifier</classifier>
+							<mainClass>${verifier.main.class}</mainClass>
+							<skip>${skip.repackage}</skip>
+							<layout>JAR</layout>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+
 
 			<!-- CAREFUL: when deploying to Nexus or any public repo make the "exec-jar" isn't uploaded. -->
 			<!--          PowerPoint paid license is part of the project and shouldn't be available to the public -->
