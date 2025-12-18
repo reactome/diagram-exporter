@@ -3,16 +3,16 @@
 		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.reactome.maven</groupId>
-        <artifactId>reactome-parent</artifactId>
-        <version>1.0.5-SNAPSHOT</version>
-    </parent>
+	<parent>
+		<groupId>org.reactome.maven</groupId>
+		<artifactId>reactome-parent</artifactId>
+		<version>1.0.5-SNAPSHOT</version>
+	</parent>
 
-    <groupId>org.reactome.server.tools</groupId>
-    <artifactId>diagram-exporter</artifactId>
-    <version>2.0.13-SNAPSHOT</version>
-    <packaging>jar</packaging>
+	<groupId>org.reactome.server.tools</groupId>
+	<artifactId>diagram-exporter</artifactId>
+	<version>2.0.13-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
 	<name>Diagram Exporter</name>
 
@@ -43,6 +43,7 @@
 		<!--build-->
 		<dependency.locations.enabled>false</dependency.locations.enabled>
 		<main.class>org.reactome.server.tools.diagram.exporter.Main</main.class>
+		<verifier.main.class>org.reactome.server.tools.diagram.exporter.verifier.DiagramExporterVerifier</verifier.main.class>
 
 		<!-- maven assembly plugin configuration -->
 		<!-- CAREFUL: when deploying to Nexus or any public repo make the "exec" isn't uploaded -->
@@ -70,18 +71,18 @@
 			<artifactId>analysis-core</artifactId>
 		</dependency>
 
-        <!-- EHLD related dependencies -->
-        <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>batik-transcoder</artifactId>
-            <version>1.18</version>
-        </dependency>
+		<!-- EHLD related dependencies -->
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-transcoder</artifactId>
+			<version>1.18</version>
+		</dependency>
 
-        <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>batik-codec</artifactId>
-            <version>1.18</version>
-        </dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-codec</artifactId>
+			<version>1.18</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.sbgn</groupId>
@@ -160,6 +161,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.reactome.release.verifier</groupId>
+			<artifactId>verifier-lib</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>
@@ -295,21 +302,38 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${spring-boot.version}</version>
-				<configuration>
-					<attach>false</attach>
-					<classifier>exec</classifier>
-					<mainClass>${main.class}</mainClass>
-					<skip>${skip.repackage}</skip>
-					<layout>JAR</layout>
-				</configuration>
+
 				<executions>
+					<!-- Main executable -->
 					<execution>
+						<id>repackage-main</id>
 						<goals>
 							<goal>repackage</goal>
 						</goals>
+						<configuration>
+							<classifier>exec</classifier>
+							<mainClass>${main.class}</mainClass>
+							<skip>${skip.repackage}</skip>
+							<layout>JAR</layout>
+						</configuration>
+					</execution>
+
+					<!-- Second executable (verifier) -->
+					<execution>
+						<id>repackage-verifier</id>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<classifier>verifier</classifier>
+							<mainClass>${verifier.main.class}</mainClass>
+							<skip>${skip.repackage}</skip>
+							<layout>JAR</layout>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+
 
 			<!-- CAREFUL: when deploying to Nexus or any public repo make the "exec-jar" isn't uploaded. -->
 			<!--          PowerPoint paid license is part of the project and shouldn't be available to the public -->
@@ -431,7 +455,6 @@
 
 	<!-- Repositories -->
 	<repositories>
-
 		<!-- MAVEN central -->
 		<repository>
 			<id>central</id>
@@ -509,6 +532,17 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<!-- Sonatype central SNAPSHOT repo -->
+		<repository>
+			<name>Central Portal Snapshots</name>
+			<id>central-portal-snapshots</id>
+			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
-
 </project>
