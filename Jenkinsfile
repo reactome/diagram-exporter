@@ -9,9 +9,11 @@ pipeline{
 	agent any
 
 	environment {
+		OUTPUT_FOLDER = 'diagrams'
 		ECR_URL = '851227637779.dkr.ecr.us-east-1.amazonaws.com/diagram-exporter'
 		ECR_SERVER = '851227637779.dkr.ecr.us-east-1.amazonaws.com'
 		CONT_NAME = 'diagram_exporter_container'
+		CONT_ROOT = '/opt/diagram-exporter'
 	}
 
 	stages{
@@ -83,36 +85,36 @@ pipeline{
 								docker run \\
 									-v ${diagramFolderPath}:/data/diagram:ro \\
 									-v ${ehldFolderPath}:/data/ehld:ro \\
-									-v ${pwd()}/output:/app/output \\
-									-v ${pwd()}/logs/svg:/opt/diagram-exporter/logs \\
+									-v ${pwd()}/${env.OUTPUT_FOLDER}:${CONT_ROOT}/${env.OUTPUT_FOLDER}/ \\
+									-v ${pwd()}/logs/svg:${CONT_ROOT}/logs \\
 									--net=host \\
 									--name ${CONT_NAME}_SVG \\
 									${ECR_URL}:latest \\
-									/bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --format svg --user $user --password \'$pass\' --input /data/diagram --ehld /data/ehld --summary /data/ehld/svgsummary.txt --target \'Homo sapiens\' --output /app/output --verbose" \\
+									/bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --format svg --user $user --password \'$pass\' --input /data/diagram --ehld /data/ehld --summary /data/ehld/svgsummary.txt --target \'Homo sapiens\' --output ./${env.OUTPUT_FOLDER} --verbose" \\
 							   """
 
 							sh """
 								docker run \\
 									-v ${diagramFolderPath}:/data/diagram:ro \\
 									-v ${ehldFolderPath}:/data/ehld:ro \\
-									-v ${pwd()}/output:/app/output \\
-									-v ${pwd()}/logs/png:/opt/diagram-exporter/logs \\
+									-v ${pwd()}/${env.OUTPUT_FOLDER}:${CONT_ROOT}/${env.OUTPUT_FOLDER}/ \\
+									-v ${pwd()}/logs/png:${CONT_ROOT}/logs \\
 									--net=host \\
 									--name ${CONT_NAME}_PNG \\
 									${ECR_URL}:latest \\
-									/bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --format png --user $user --password \'$pass\' --input /data/diagram --ehld /data/ehld --summary /data/ehld/svgsummary.txt --target \'Homo sapiens\' --output /app/output --verbose"
+									/bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --format png --user $user --password \'$pass\' --input /data/diagram --ehld /data/ehld --summary /data/ehld/svgsummary.txt --target \'Homo sapiens\' --output ./${env.OUTPUT_FOLDER} --verbose"
 							   """
 						
 							sh """
 								docker run \\
 									-v ${diagramFolderPath}:/data/diagram:ro \\
 									-v ${ehldFolderPath}:/data/ehld:ro \\
-									-v ${pwd()}/output:/app/output \\
-									-v ${pwd()}/logs/sbgn:/opt/diagram-exporter/logs \\
+									-v ${pwd()}/${env.OUTPUT_FOLDER}:${CONT_ROOT}/${env.OUTPUT_FOLDER}/ \\
+									-v ${pwd()}/logs/sbgn:${CONT_ROOT}/logs \\
 									--net=host \\
 									--name ${CONT_NAME}_SBGN \\
 									${ECR_URL}:latest \\
-									/bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --format sbgn --user $user --password \'$pass\' --input /data/diagram --target \'Homo sapiens\' --output /app/output --verbose"
+									/bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --format sbgn --user $user --password \'$pass\' --input /data/diagram --target \'Homo sapiens\' --output ./${env.OUTPUT_FOLDER} --verbose"
 							   """
 						}
 					} finally {
@@ -127,6 +129,7 @@ pipeline{
 			steps {
 				script {
 					def releaseVersion = utils.getReleaseVersion()
+					def expectedFileCount = 1200
 
 					sh """
 						docker run \\
@@ -137,7 +140,7 @@ pipeline{
 						--net=host \\
 						--name ${CONT_NAME}_verifier \\
 						${ECR_URL}:latest \\
-						/bin/bash -c "java -jar target/diagram-exporter-verifier.jar --releaseNumber ${releaseVersion} --output ${CONT_ROOT}/${env.OUTPUT_FOLDER}"
+						/bin/bash -c "java -jar target/diagram-exporter-verifier.jar --releaseNumber ${releaseVersion} --output ${CONT_ROOT}/${env.OUTPUT_FOLDER} --expectedFileCount ${expectedFileCount}"
 					"""
 				}
 			}
