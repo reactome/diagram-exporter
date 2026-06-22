@@ -179,9 +179,11 @@ pipeline{
 					def sbgnArchive = "homo_sapiens.sbgn.tar.gz"
 					def downloadPath = "${env.ABS_DOWNLOAD_PATH}/${releaseVersion}"
 
-					sh "cd output/svg/Modern/; tar -zcf ${svgArchive} *.svg; mv ${svgArchive} ../../../"
-					sh "cd output/png/Modern/; tar -zcf ${pngArchive} *.png; mv ${pngArchive} ../../../"
-					sh "cd output/sbgn/; tar -zcf ${sbgnArchive} *.sbgn; mv ${sbgnArchive} ../../"
+					sh "sudo chown -R jenkins:jenkins ${OUTPUT_FOLDER}" 
+
+					sh "cd ${OUTPUT_FOLDER}/svg/Modern/; tar -zcf ${svgArchive} *.svg; mv ${svgArchive} ../../../"
+					sh "cd ${OUTPUT_FOLDER}/png/Modern/; tar -zcf ${pngArchive} *.png; mv ${pngArchive} ../../../"
+					sh "cd ${OUTPUT_FOLDER}/sbgn/; tar -zcf ${sbgnArchive} *.sbgn; mv ${sbgnArchive} ../../"
 
 					sh "cp ${svgArchive} ${downloadPath}/"
 					sh "cp ${pngArchive} ${downloadPath}/"
@@ -197,7 +199,7 @@ pipeline{
 					def releaseVersion = utils.getReleaseVersion()
 					def dataFiles = ["diagrams.svg.tgz", "diagrams.png.tgz", "homo_sapiens.sbgn.tar.gz"]
 					def logFiles = ["logs/*"]
-					def foldersToDelete = ["output"]
+					def foldersToDelete = ["${OUTPUT_FOLDER}"]
 					utils.cleanUpAndArchiveBuildFiles("diagram_exporter", dataFiles, logFiles, foldersToDelete)
 				}
 			}
