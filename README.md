@@ -34,7 +34,7 @@ mvn clean package
 
 ### Usage as command line
 
-This exporter is meant to be executed as a step of the release process to generate the SBGN and SVG files for the pathway diagrams in 'Homo sapiens'.
+This exporter is meant to be executed as a step of the release process to generate the SVG and PNG files for the pathway diagrams in 'Homo sapiens'. The release's SBGN file is made by [sbgn-exporter](https://github.com/reactome/sbgn-exporter).
 
 To find out the parameters, please use the "--help" option:
 
