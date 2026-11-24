@@ -1,4 +1,6 @@
-// This Jenkinsfile is used by Jenkins to run the DiagramExporter step of Reactome's release.
+// This Jenkinsfile is used by Jenkins to run the DiagramExporter step of Reactome's release: the
+// release's SVG and PNG diagram files. The SBGN file (homo_sapiens.sbgn.tar.gz) is made by the
+// 'SBGNExporter' step (reactome/sbgn-exporter) instead.
 // It requires that the DiagramConverter step has been run successfully before it can be run.
 
 import org.reactome.release.jenkins.utilities.Utilities
@@ -45,14 +47,13 @@ pipeline{
 						if docker ps -a --format '{{.Names}}' | grep -Eq '${CONT_NAME}'; then
 							docker rm -f ${CONT_NAME}_SVG
 							docker rm -f ${CONT_NAME}_PNG
-							docker rm -f ${CONT_NAME}_SBGN
 						fi
 					"""
 				}
 			}
 		}
 
-		// Execute the jar file to produce SVG, PNG, and SBGN diagram files.
+		// Execute the jar file to produce SVG and PNG diagram files.
 		stage('Main: Run Diagram-Exporter'){
 			steps{
 				script{
@@ -75,8 +76,8 @@ pipeline{
 					}
 					sh "mkdir -p output"
 					sh "sudo rm -rf output/*"
-					sh "mkdir -p logs/svg logs/png logs/sbgn"
-					sh "sudo rm -rf logs/svg/* logs/png/* logs/sbgn/*"
+					sh "mkdir -p logs/svg logs/png"
+					sh "sudo rm -rf logs/svg/* logs/png/*"
 					
 					try {
 						sh "sudo service tomcat stop"
@@ -104,18 +105,6 @@ pipeline{
 									${ECR_URL}:latest \\
 									/bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --format png --user $user --password \'$pass\' --input /data/diagram --ehld /data/ehld --summary /data/ehld/svgsummary.txt --target \'Homo sapiens\' --output ./${env.OUTPUT_FOLDER} --verbose"
 							   """
-						
-							sh """
-								docker run \\
-									-v ${diagramFolderPath}:/data/diagram:ro \\
-									-v ${ehldFolderPath}:/data/ehld:ro \\
-									-v ${pwd()}/${env.OUTPUT_FOLDER}:${CONT_ROOT}/${env.OUTPUT_FOLDER}/ \\
-									-v ${pwd()}/logs/sbgn:${CONT_ROOT}/logs \\
-									--net=host \\
-									--name ${CONT_NAME}_SBGN \\
-									${ECR_URL}:latest \\
-									/bin/bash -c "java -Xmx${env.JAVA_MEM_MAX}m -jar target/diagram-exporter-exec.jar --format sbgn --user $user --password \'$pass\' --input /data/diagram --target \'Homo sapiens\' --output ./${env.OUTPUT_FOLDER} --verbose"
-							   """
 						}
 					} finally {
 						sh "sudo service tomcat start"
@@ -130,10 +119,21 @@ pipeline{
 				script {
 					def releaseVersion = utils.getReleaseVersion()
 					def expectedFileCount = 1200
+					def previousReleaseVersion = utils.getPreviousReleaseVersion()
+					def previousList = "previous_files_and_sizes.txt"
+
+					// The verifier expects every file in the previous release's list, and that list
+					// can still hold SBGN files from before the 'SBGNExporter' step made them. Hand it
+					// the list without them: it reads a list already in its working folder instead
+					// of fetching one.
+					sh "aws s3 --no-progress cp s3://reactome/private/releases/${previousReleaseVersion}/diagram_exporter/data/files_and_sizes.txt ${previousList}"
+					sh "awk -F'\\t' '\$2 !~ /^sbgn\\//' ${previousList} > ${previousList}.kept"
+					sh "mv ${previousList}.kept ${previousList}"
 
 					sh """
 						docker run \\
 						--rm \\
+						-v ${pwd()}/${previousList}:${CONT_ROOT}/files_and_sizes.txt:ro \\
 						-v ${pwd()}/${env.OUTPUT_FOLDER}:${CONT_ROOT}/${env.OUTPUT_FOLDER}/ \\
 						-v \$HOME/.aws:/root/.aws:ro \\
 						-e AWS_REGION=us-east-1 \\
@@ -142,6 +142,7 @@ pipeline{
 						${ECR_URL}:latest \\
 						/bin/bash -c "java -jar target/diagram-exporter-verifier.jar --releaseNumber ${releaseVersion} --output ${CONT_ROOT}/${env.OUTPUT_FOLDER} --expectedFileCount ${expectedFileCount}"
 					"""
+					sh "rm ${previousList}"
 				}
 			}
 		}
@@ -176,18 +177,15 @@ pipeline{
 					def releaseVersion = utils.getReleaseVersion()
 					def svgArchive = "diagrams.svg.tgz"
 					def pngArchive = "diagrams.png.tgz"
-					def sbgnArchive = "homo_sapiens.sbgn.tar.gz"
 					def downloadPath = "${env.ABS_DOWNLOAD_PATH}/${releaseVersion}"
 
 					sh "sudo chown -R jenkins:jenkins ${OUTPUT_FOLDER}" 
 
 					sh "cd ${OUTPUT_FOLDER}/svg/Modern/; tar -zcf ${svgArchive} *.svg; mv ${svgArchive} ../../../"
 					sh "cd ${OUTPUT_FOLDER}/png/Modern/; tar -zcf ${pngArchive} *.png; mv ${pngArchive} ../../../"
-					sh "cd ${OUTPUT_FOLDER}/sbgn/; tar -zcf ${sbgnArchive} *.sbgn; mv ${sbgnArchive} ../../"
 
 					sh "cp ${svgArchive} ${downloadPath}/"
 					sh "cp ${pngArchive} ${downloadPath}/"
-					sh "cp ${sbgnArchive} ${downloadPath}/"
 				}
 			}
 		}
@@ -197,7 +195,7 @@ pipeline{
 			steps{
 				script{
 					def releaseVersion = utils.getReleaseVersion()
-					def dataFiles = ["diagrams.svg.tgz", "diagrams.png.tgz", "homo_sapiens.sbgn.tar.gz"]
+					def dataFiles = ["diagrams.svg.tgz", "diagrams.png.tgz"]
 					def logFiles = ["logs/*"]
 					def foldersToDelete = ["${OUTPUT_FOLDER}"]
 					utils.cleanUpAndArchiveBuildFiles("diagram_exporter", dataFiles, logFiles, foldersToDelete)
